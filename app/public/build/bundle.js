@@ -47,6 +47,10 @@ var app = (function () {
     function space() {
         return text(' ');
     }
+    function listen(node, event, handler, options) {
+        node.addEventListener(event, handler, options);
+        return () => node.removeEventListener(event, handler, options);
+    }
     function attr(node, attribute, value) {
         if (value == null)
             node.removeAttribute(attribute);
@@ -55,6 +59,9 @@ var app = (function () {
     }
     function children(element) {
         return Array.from(element.childNodes);
+    }
+    function set_input_value(input, value) {
+        input.value = value == null ? '' : value;
     }
     function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
         const e = document.createEvent('CustomEvent');
@@ -327,6 +334,21 @@ var app = (function () {
         dispatch_dev('SvelteDOMRemove', { node });
         detach(node);
     }
+    function listen_dev(node, event, handler, options, has_prevent_default, has_stop_propagation, has_stop_immediate_propagation) {
+        const modifiers = options === true ? ['capture'] : options ? Array.from(Object.keys(options)) : [];
+        if (has_prevent_default)
+            modifiers.push('preventDefault');
+        if (has_stop_propagation)
+            modifiers.push('stopPropagation');
+        if (has_stop_immediate_propagation)
+            modifiers.push('stopImmediatePropagation');
+        dispatch_dev('SvelteDOMAddEventListener', { node, event, handler, modifiers });
+        const dispose = listen(node, event, handler, options);
+        return () => {
+            dispatch_dev('SvelteDOMRemoveEventListener', { node, event, handler, modifiers });
+            dispose();
+        };
+    }
     function attr_dev(node, attribute, value) {
         attr(node, attribute, value);
         if (value == null)
@@ -379,31 +401,55 @@ var app = (function () {
     	let t1;
     	let t2;
     	let t3;
-    	let p;
     	let t4;
-    	let a;
-    	let t6;
+    	let h1_style_value;
+    	let t5;
+    	let p;
+    	let t8;
+    	let button;
+    	let t10;
+    	let input0;
+    	let t11;
+    	let input1;
+    	let t12;
+    	let input2;
+    	let mounted;
+    	let dispose;
 
     	const block = {
     		c: function create() {
     			main = element("main");
     			h1 = element("h1");
     			t0 = text("Hello ");
-    			t1 = text(/*name*/ ctx[0]);
-    			t2 = text("!");
-    			t3 = space();
+    			t1 = text(/*fullName*/ ctx[3]);
+    			t2 = text(" - ");
+    			t3 = text(/*nameColor*/ ctx[2]);
+    			t4 = text(" !");
+    			t5 = space();
     			p = element("p");
-    			t4 = text("Visit the ");
-    			a = element("a");
-    			a.textContent = "Svelte tutorial";
-    			t6 = text(" to learn how to build Svelte apps.");
-    			attr_dev(h1, "class", "svelte-1tky8bj");
-    			add_location(h1, file, 5, 1, 46);
-    			attr_dev(a, "href", "https://svelte.dev/tutorial");
-    			add_location(a, file, 6, 14, 83);
-    			add_location(p, file, 6, 1, 70);
-    			attr_dev(main, "class", "svelte-1tky8bj");
-    			add_location(main, file, 4, 0, 38);
+    			p.textContent = `Wellcome to my website . version : ${/*version*/ ctx[4]}`;
+    			t8 = space();
+    			button = element("button");
+    			button.textContent = "Change Name";
+    			t10 = space();
+    			input0 = element("input");
+    			t11 = space();
+    			input1 = element("input");
+    			t12 = space();
+    			input2 = element("input");
+    			attr_dev(h1, "style", h1_style_value = "color : " + /*nameColor*/ ctx[2]);
+    			attr_dev(h1, "class", "svelte-gtsr9u");
+    			add_location(h1, file, 15, 1, 208);
+    			add_location(p, file, 16, 1, 286);
+    			add_location(button, file, 17, 1, 339);
+    			attr_dev(input0, "type", "text");
+    			add_location(input0, file, 18, 1, 394);
+    			attr_dev(input1, "type", "text");
+    			add_location(input1, file, 19, 1, 442);
+    			attr_dev(input2, "type", "text");
+    			add_location(input2, file, 20, 1, 489);
+    			attr_dev(main, "class", "svelte-gtsr9u");
+    			add_location(main, file, 14, 0, 200);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -414,19 +460,59 @@ var app = (function () {
     			append_dev(h1, t0);
     			append_dev(h1, t1);
     			append_dev(h1, t2);
-    			append_dev(main, t3);
+    			append_dev(h1, t3);
+    			append_dev(h1, t4);
+    			append_dev(main, t5);
     			append_dev(main, p);
-    			append_dev(p, t4);
-    			append_dev(p, a);
-    			append_dev(p, t6);
+    			append_dev(main, t8);
+    			append_dev(main, button);
+    			append_dev(main, t10);
+    			append_dev(main, input0);
+    			set_input_value(input0, /*firstName*/ ctx[0]);
+    			append_dev(main, t11);
+    			append_dev(main, input1);
+    			set_input_value(input1, /*lastName*/ ctx[1]);
+    			append_dev(main, t12);
+    			append_dev(main, input2);
+    			set_input_value(input2, /*nameColor*/ ctx[2]);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(button, "click", /*handleClick*/ ctx[5], false, false, false, false),
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[6]),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[7]),
+    					listen_dev(input2, "input", /*input2_input_handler*/ ctx[8])
+    				];
+
+    				mounted = true;
+    			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*name*/ 1) set_data_dev(t1, /*name*/ ctx[0]);
+    			if (dirty & /*fullName*/ 8) set_data_dev(t1, /*fullName*/ ctx[3]);
+    			if (dirty & /*nameColor*/ 4) set_data_dev(t3, /*nameColor*/ ctx[2]);
+
+    			if (dirty & /*nameColor*/ 4 && h1_style_value !== (h1_style_value = "color : " + /*nameColor*/ ctx[2])) {
+    				attr_dev(h1, "style", h1_style_value);
+    			}
+
+    			if (dirty & /*firstName*/ 1 && input0.value !== /*firstName*/ ctx[0]) {
+    				set_input_value(input0, /*firstName*/ ctx[0]);
+    			}
+
+    			if (dirty & /*lastName*/ 2 && input1.value !== /*lastName*/ ctx[1]) {
+    				set_input_value(input1, /*lastName*/ ctx[1]);
+    			}
+
+    			if (dirty & /*nameColor*/ 4 && input2.value !== /*nameColor*/ ctx[2]) {
+    				set_input_value(input2, /*nameColor*/ ctx[2]);
+    			}
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
+    			mounted = false;
+    			run_all(dispose);
     		}
     	};
 
@@ -442,43 +528,83 @@ var app = (function () {
     }
 
     function instance($$self, $$props, $$invalidate) {
+    	let fullName;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
-    	let { name } = $$props;
+    	let firstName = "Hasiru";
+    	let lastName = "Pinsara";
+    	let nameColor = "red";
+    	let version = 1.0;
 
-    	$$self.$$.on_mount.push(function () {
-    		if (name === undefined && !('name' in $$props || $$self.$$.bound[$$self.$$.props['name']])) {
-    			console.warn("<App> was created without expected prop 'name'");
-    		}
-    	});
+    	const handleClick = () => {
+    		
+    	};
 
-    	const writable_props = ['name'];
+    	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$$set = $$props => {
-    		if ('name' in $$props) $$invalidate(0, name = $$props.name);
-    	};
+    	function input0_input_handler() {
+    		firstName = this.value;
+    		$$invalidate(0, firstName);
+    	}
 
-    	$$self.$capture_state = () => ({ name });
+    	function input1_input_handler() {
+    		lastName = this.value;
+    		$$invalidate(1, lastName);
+    	}
+
+    	function input2_input_handler() {
+    		nameColor = this.value;
+    		$$invalidate(2, nameColor);
+    	}
+
+    	$$self.$capture_state = () => ({
+    		firstName,
+    		lastName,
+    		nameColor,
+    		version,
+    		handleClick,
+    		fullName
+    	});
 
     	$$self.$inject_state = $$props => {
-    		if ('name' in $$props) $$invalidate(0, name = $$props.name);
+    		if ('firstName' in $$props) $$invalidate(0, firstName = $$props.firstName);
+    		if ('lastName' in $$props) $$invalidate(1, lastName = $$props.lastName);
+    		if ('nameColor' in $$props) $$invalidate(2, nameColor = $$props.nameColor);
+    		if ('version' in $$props) $$invalidate(4, version = $$props.version);
+    		if ('fullName' in $$props) $$invalidate(3, fullName = $$props.fullName);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [name];
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*firstName, lastName*/ 3) {
+    			$$invalidate(3, fullName = `${firstName} ${lastName}`);
+    		}
+    	};
+
+    	return [
+    		firstName,
+    		lastName,
+    		nameColor,
+    		fullName,
+    		version,
+    		handleClick,
+    		input0_input_handler,
+    		input1_input_handler,
+    		input2_input_handler
+    	];
     }
 
     class App extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance, create_fragment, safe_not_equal, { name: 0 });
+    		init(this, options, instance, create_fragment, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -486,14 +612,6 @@ var app = (function () {
     			options,
     			id: create_fragment.name
     		});
-    	}
-
-    	get name() {
-    		throw new Error("<App>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set name(value) {
-    		throw new Error("<App>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 

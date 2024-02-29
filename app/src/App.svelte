@@ -1,10 +1,24 @@
 <script>
-	export let name;
+	let firstName = "Hasiru";
+	let lastName = "Pinsara";
+	let nameColor = "red";
+	let version = 1.0;
+	$: fullName = `${firstName} ${lastName}`;
+
+	const handleClick = () => {
+		
+	}
+	
+
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<h1 style="color : { nameColor }" >Hello { fullName } - { nameColor } !</h1>
+	<p>Wellcome to my website . version : {version}</p>
+	<button on:click={ handleClick }>Change Name</button>
+	<input type="text" bind:value = { firstName }>
+	<input type="text" bind:value = { lastName }>
+	<input type="text" bind:value = { nameColor }>
 </main>
 
 <style>
@@ -16,7 +30,7 @@
 	}
 
 	h1 {
-		color: #ff3e00;
+
 		text-transform: uppercase;
 		font-size: 4em;
 		font-weight: 100;
